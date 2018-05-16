@@ -30,13 +30,17 @@ that led to the event.
 
 ## Trace ##
 Trace files contain one line per traced event as follows:
+```
     type: [cycles] <address> info
+```
 
 Type is eather "inst:" (instruction) or "data:" (memory access).  Igore "exce:" entries.
 
 For "inst" types, the address is the EIP and info is the opcode followed by the assembly statement.
 example:
+```
     inst: [c60f1956fd] <0x0000000008048081> 89 e5             mov ebp,esp
+```
 
 For "data" types, the address is the memory being accessed, and info reflects whether
 it is a read or a write, the number of bytes and the value to be read or written.
@@ -45,6 +49,7 @@ it is a read or a write, the number of bytes and the value to be read or written
 A log of system calls is generated as xml with entries for each
 system call, identified by the type of call (e.g., read, mmap, etc.).
 Example:
+```
       <mmap>
         <cycle>2db3995dd8f6</cycle>
         <eip>b7ff85a3</eip>
@@ -66,6 +71,7 @@ Example:
         <count>32</count>
         <read_data>603f05325b66c670edd1709689c4b2cf7ef8e778e1d49294cd13fae2415a96b4</read_data>
       </read>
+```
 
 ## Static Analysis ##
 The results of static analysis on a binary is organized as one one for
@@ -74,10 +80,12 @@ the start of the function, the function name (typically stripped binaries
 will result in names that are little more than the function address), and
 a list of basic block addresses within the function.
 example:
+```    
     804beb0 deregister_tm_clones 804beb0 804bebf 804bec1 804beca
     804bee0 register_tm_clones 804bee0 804bef8 804befa 804bf03
     804bf20 __do_global_dtors_aux 804bf20 804bf29 804bf3c
     804bf40 frame_dummy 804bf40 804bf49 804bf52 804bf67 804bee0
+```
 
 ## Event summaries ##
 Event summaries are captured as xml files, most of which can be ignored.
@@ -92,7 +100,20 @@ the "event type" tag identifying the specific event as follows:
 The event types (3), (4) and (5) indicate a proof of vulnerability.
 The "descrip" tag includes the EIP at which the event occured.
 Example:
-<replay_log><replay_entry><replay_name>POV_CBdf9df201_ATH_000000</replay_name><time_start>2014-12-11 10:50:41</time_start><cb_entry><cb_name>CBdf9df201_01</cb_name><cb_sys_calls>26</cb_sys_calls><cb_cycles>3000386</cb_cycles><cb_user_cycles>31895</cb_user_cycles><cb_faults>1</cb_faults><cb_wallclock_duration>0.26</cb_wallclock_duration></cb_entry><event><source><kind>CB</kind><pid>2810</pid><comm>CBdf9df201_01</comm></source><descrip>Signal 11 at eip: 8048b12 </descrip><event_type>3</event_type></event><replay_sys_calls>307</replay_sys_calls><replay_faults>5</replay_faults><time_end>2014-12-11 10:50:59</time_end><duration>17.99</duration><drone>10.20.200.115_10</drone></replay_entry></replay_log>
+```xml
+<replay_log>
+    <replay_entry>
+    <replay_name>POV_CBdf9df201_ATH_000000</replay_name>
+    <time_start>2014-12-11 10:50:41</time_start>
+    <cb_entry><cb_name>CBdf9df201_01</cb_name><cb_sys_calls>26</cb_sys_calls><cb_cycles>3000386</cb_cycles>
+    <cb_user_cycles>31895</cb_user_cycles><cb_faults>1</cb_faults><cb_wallclock_duration>0.26</cb_wallclock_duration>
+    </cb_entry><event><source><kind>CB</kind><pid>2810</pid><comm>CBdf9df201_01</comm>
+    </source><descrip>Signal 11 at eip: 8048b12 </descrip><event_type>3</event_type></event>
+    <replay_sys_calls>307</replay_sys_calls><replay_faults>5</replay_faults><time_end>2014-12-11 10:50:59</time_end>
+    <duration>17.99</duration><drone>10.20.200.115_10</drone>
+    </replay_entry>
+</replay_log>
+```
 
 Note, event summaries do not reflect application-level events, such as whether a service poll passes or not.  We do not record
 the SIGKILL that occurs when a CB fails a service poll because that is not a reliable determination, i.e., a CB that fails a poll could
@@ -116,7 +137,7 @@ static analysis artifact in a file named "blocks.txt".  Beneath each replay
 directory are the system call logs, (in files with a .xml.gz extension) and
 the traces, (in files with a .txt.gz extension).
 
-#Steps for creating artifacts#
+# Steps for creating artifacts #
 Use the Simics-based CGC forensics monitor to create the trace file and the 
 log of system calls.
 [Extend it to include a file-based record of events, including pointer overwrites.]
